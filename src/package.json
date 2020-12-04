@@ -1,0 +1,26 @@
+{
+  "name": "kms_tasks_client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint src/**/*.js src/**/*.jsx"
+  },
+  "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "@zeit/next-sass": "^1.0.1",
+    "antd": "^4.9.1",
+    "eslint": "^7.14.0",
+    "eslint-plugin-react": "^7.21.5",
+    "next": "10.0.3",
+    "next-routes": "^1.4.2",
+    "node-sass": "^5.0.0",
+    "prettier": "^2.2.1",
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-icons": "^3.10.0",
+    "react-infinite-calendar": "^2.3.1"
+  }
+}
