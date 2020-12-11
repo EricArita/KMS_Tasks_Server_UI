@@ -1,45 +1,29 @@
-import { useMemo } from "react";
 import { createStore, Store, applyMiddleware } from "redux";
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 import rootReducer from "./reducers";
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { composeWithDevTools } from "redux-devtools-extension";
 
 const initialState: object = {
   authUserInfo: {
     userName: "",
-    email: ""
-  }
+    email: "",
+  },
 };
 
-let store: Store = null;
+const persistConfig = {
+  key: "root",
+  storage,
+};
 
-function initStore(state: any) {
-  console.log("initStore");
-  return createStore(
-    rootReducer,
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export function usePersistStore(state = initialState) {
+  const store = createStore(
+    persistedReducer,
     state,
     composeWithDevTools(applyMiddleware())
-  )
-}
-
-export const initializeStore = (previousState = initialState) => {
-  console.log("initializeStore");
-  let _store = store ?? initStore(previousState)
-
-  if (previousState && store) {
-    _store = initStore({
-      ...store.getState(),
-      ...previousState,
-    });
-
-    store = null;
-  }
-
-  if (!store) store = _store
-
-  return _store
-};
-
-export function useStore(initialState) {
-  const store = useMemo(() => initializeStore(initialState), [initialState]);
-  return store;
+  );
+  const persistor = persistStore(store);
+  return { store, persistor };
 }

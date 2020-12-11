@@ -1,15 +1,18 @@
 import React from "react";
 import "../styles/globals.scss";
 import { Provider } from "react-redux";
-import { useStore } from "../redux/configureStore";
+import { PersistGate } from "redux-persist/integration/react";
+import { usePersistStore } from "../redux/configureStore";
 
 export default function App({ Component, pageProps }) {
-  const store = useStore(pageProps.initialReduxState);
-  console.log(store.getState());
+  console.log("reload App");
+  const { store, persistor } = usePersistStore(pageProps.initialReduxState);
 
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+      <PersistGate loading={null} persistor={persistor}>
+        <Component {...pageProps} />
+      </PersistGate>
     </Provider>
   );
 }
