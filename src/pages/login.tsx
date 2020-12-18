@@ -3,19 +3,27 @@ import { Form, Input, Button, Divider, message } from "antd";
 import { FcGoogle } from "react-icons/fc";
 import { SiFacebook, SiGithub } from "react-icons/si";
 import { AuthLayout } from "../components/layout/AuthLayout";
-import { fetchAPI } from "../helper/ApiHelper";
+import { callApiServer } from "../helper/ApiHelper";
 import "../styles/login.scss";
 import { FormInstance } from "antd/lib/form";
 import { connect } from "react-redux";
 import { saveAuthUser } from "../redux/actions/userActionCreator";
+import { config } from "../config/config";
 
 interface LoginInfo {
-  username: string,
-  password: string
+  username: string;
+  password: string;
 }
 
 interface Prop {
-  reduxSaveAuthUser: any
+  reduxSaveAuthUser: any;
+}
+
+declare global {
+  interface Window {
+    FB: fb.FacebookStatic;
+    fbAsyncInit: () => void;
+  }
 }
 
 class LoginPage extends React.Component<Prop> {
@@ -31,21 +39,73 @@ class LoginPage extends React.Component<Prop> {
 
   constructor(props) {
     super(props);
+    this.getApiAccessToken = this.getApiAccessToken.bind(this);
+    this.handleFBLogin = this.handleFBLogin.bind(this);
+  }
+
+  componentDidMount() {
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: config.facebookApp.appId,
+        cookie: true,
+        xfbml: true,
+        version: "v2.5",
+      });
+    };
+
+    console.log("Loading fb api");
+
+    (function (d, s, id) {
+      var js,
+        fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    })(document, "script", "facebook-jssdk");
+  }
+
+  async getApiAccessToken(loginResponse: fb.StatusResponse){
+    let res = await callApiServer("POST", "Auth/facebook-login", {
+      userAccessToken: loginResponse.authResponse.accessToken
+    });
+    
+    if (res.data.isAuthenticated){
+      message.success(res.message);
+    }
+    else {
+      message.error("Login fail");
+    }
+  }
+
+  handleFBLogin() {
+    let status = "";
+
+    FB.getLoginStatus((response: fb.StatusResponse) => {
+      status = response.status;
+    });
+
+    if (status != "connected") {
+      FB.login(this.getApiAccessToken);
+    }
+    else {
+      message.success("Login successfully");
+    }
   }
 
   async Login() {
-    const authInfo:LoginInfo = await this.formRef.current.getFieldsValue();
-    let response = await fetchAPI("POST", "Auth/login", authInfo);
+    const authInfo: LoginInfo = await this.formRef.current.getFieldsValue();
+    let response = await callApiServer("POST", "Auth/login", authInfo);
 
     if (response == undefined) return;
     if (!response.ok) {
       message.error(response.message);
-    }
-    else if (response.data.isAuthenticated) {
+    } else if (response.data.isAuthenticated) {
       sessionStorage.setItem("token", response.data.token);
       this.props.reduxSaveAuthUser({
         userName: response.data.userName,
-        email: response.data.email
+        email: response.data.email,
       });
 
       message.success("Login successfully");
@@ -118,9 +178,12 @@ class LoginPage extends React.Component<Prop> {
                 <FcGoogle size={20} />
                 <span className={"google-text"}>Sign in with Google</span>
               </Button>
-              <Button style={{ marginTop: "12px" }}>
+              <Button
+                style={{ marginTop: "12px" }}
+                onClick={this.handleFBLogin}
+              >
                 <SiFacebook size={20} color={"#3b5998"} />
-                <span className={"facebook-text"}>Sign in with Google</span>
+                <span className={"facebook-text"}>Sign in with Facebook</span>
               </Button>
               <Button style={{ marginTop: "12px" }}>
                 <SiGithub size={20} />
@@ -149,8 +212,7 @@ class LoginPage extends React.Component<Prop> {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  reduxSaveAuthUser: (payload: any) => dispatch(saveAuthUser(payload))
-})
+  reduxSaveAuthUser: (payload: any) => dispatch(saveAuthUser(payload)),
+});
 
 export default connect(null, mapDispatchToProps)(LoginPage);
-

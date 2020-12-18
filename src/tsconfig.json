@@ -6,6 +6,8 @@
       "dom.iterable",
       "esnext"
     ],
+    // "outDir": "./out-tsc/app",
+    "types": ["facebook-js-sdk"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,

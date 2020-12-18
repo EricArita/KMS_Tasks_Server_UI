@@ -1,21 +1,23 @@
 import { config } from "../config/config";
 
-export const fetchAPI = async (httpMethod: string, api: string, requestBody?: any) => {
+export const callApiServer = async (httpMethod: string, api: string, requestBody?: object) => {
   let url = config.url.apiServer + api;
 
   try {
     if (httpMethod === "GET") {
       if (httpMethod === "GET" && requestBody !== undefined && requestBody !== null) {
         const encodedQueryParams = encodeURI(JSON.stringify(requestBody));
-        url += url.includes("count") ? `?where=${encodedQueryParams}` : `?filter=${encodedQueryParams}`;
+        url += `?${encodedQueryParams}`;
       }
+
+      const accessToken = localStorage.getItem("token");
 
       const response = await fetch(url, {
         method: httpMethod,
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: ''
+          Authorization: accessToken ? `Bearer ${accessToken}` : ""
         },
       });
 
