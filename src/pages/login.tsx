@@ -9,14 +9,24 @@ import { FormInstance } from "antd/lib/form";
 import { connect } from "react-redux";
 import { saveAuthUser } from "../redux/actions/userActionCreator";
 import { config } from "../config/config";
+import Checkbox from "antd/lib/checkbox/Checkbox";
 
 interface LoginInfo {
   username: string;
   password: string;
+  remember_password: boolean;
 }
 
 interface Prop {
-  reduxSaveAuthUser: any;
+  username: string,
+  password: string,
+  reduxSaveAuthUser: any
+}
+
+interface State {
+  rememberPassword: boolean,
+  username: string,
+  password: string
 }
 
 declare global {
@@ -26,19 +36,21 @@ declare global {
   }
 }
 
-class LoginPage extends React.Component<Prop> {
-  state = {
-    loading: {
-      login: false,
-      getVerifyCode: false,
-      requestResetPassword: false,
-      changePassword: false,
-    },
-  };
-  formRef = React.createRef<FormInstance>();
-
+class LoginPage extends React.Component<Prop, State> {
+  formRef: React.RefObject<FormInstance<any>>;
+  
   constructor(props) {
     super(props);
+  
+    const rememberPassword = localStorage.getItem("remember_me") === "true";
+    console.log(rememberPassword);
+    this.state = {
+      rememberPassword: rememberPassword,
+      username: rememberPassword ? localStorage.getItem("usernameUnauthorized") : "",
+      password: rememberPassword ? localStorage.getItem("passwordUnauthorized") : ""
+    };
+    
+    this.formRef = React.createRef<FormInstance>();
     this.getApiAccessToken = this.getApiAccessToken.bind(this);
     this.handleFBLogin = this.handleFBLogin.bind(this);
   }
@@ -53,8 +65,6 @@ class LoginPage extends React.Component<Prop> {
       });
     };
 
-    console.log("Loading fb api");
-
     (function (d, s, id) {
       var js,
         fjs = d.getElementsByTagName(s)[0];
@@ -66,15 +76,14 @@ class LoginPage extends React.Component<Prop> {
     })(document, "script", "facebook-jssdk");
   }
 
-  async getApiAccessToken(loginResponse: fb.StatusResponse){
+  async getApiAccessToken(loginResponse: fb.StatusResponse) {
     let res = await callApiServer("POST", "Auth/facebook-login", {
-      userAccessToken: loginResponse.authResponse.accessToken
+      userAccessToken: loginResponse.authResponse.accessToken,
     });
-    
-    if (res.data.isAuthenticated){
+
+    if (res.data.isAuthenticated) {
       message.success(res.message);
-    }
-    else {
+    } else {
       message.error("Login fail");
     }
   }
@@ -88,21 +97,33 @@ class LoginPage extends React.Component<Prop> {
 
     if (status != "connected") {
       FB.login(this.getApiAccessToken);
-    }
-    else {
+    } else {
       message.success("Login successfully");
     }
   }
 
   async Login() {
     const authInfo: LoginInfo = await this.formRef.current.getFieldsValue();
+    localStorage.setItem("remember_me", this.state.rememberPassword.toString());
+
+    if (this.state.rememberPassword) {
+      localStorage.setItem("usernameUnauthorized", authInfo.username);
+      localStorage.setItem("passwordUnauthorized", authInfo.password);
+    }
+    else {
+      localStorage.removeItem("usernameUnauthorized");
+      localStorage.removeItem("passwordUnauthorized");
+    }
+
     let response = await callApiServer("POST", "Auth/login", authInfo);
 
     if (response == undefined) return;
     if (!response.ok) {
       message.error(response.message);
-    } else if (response.data.isAuthenticated) {
-      sessionStorage.setItem("token", response.data.token);
+    } 
+    else if (response.data.isAuthenticated) {
+      localStorage.setItem("token", response.data.token);
+
       this.props.reduxSaveAuthUser({
         userName: response.data.userName,
         email: response.data.email,
@@ -124,27 +145,43 @@ class LoginPage extends React.Component<Prop> {
               }}
               key={"login-form"}
             >
-              <Form.Item name="username">
-                <Input placeholder="Email or Username" type="text" />
+              <Form.Item
+                name="username"
+                initialValue={this.state.username}
+                hasFeedback
+                rules={[
+                  { required: true, message: "Please input your username!" },
+                ]}
+              >
+                <Input placeholder="Email or Username" type="text" style={{height: "37px"}} allowClear/>
               </Form.Item>
-              <Form.Item name="password">
-                <Input placeholder={"Password"} type="password" />
+              <Form.Item
+                name="password"
+                initialValue={this.state.password}
+                rules={[
+                  {
+                    required: true,
+                    pattern: new RegExp(
+                      "^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$"
+                    ),
+                    message: "Password must contain at least 6 characters and include number, digit, speacial character"
+                  }
+                ]}
+                hasFeedback
+              >
+                <Input placeholder={"Password"} type="password" style={{height: "37px"}} allowClear />
               </Form.Item>
-              <Form.Item name="remember-password">
+              <Form.Item>
                 <div className="remember-password-wrapper">
                   <span>
-                    <input
-                      type="checkbox"
-                      style={{ verticalAlign: "middle" }}
-                    />
-                    <label
-                      htmlFor="remember-password"
-                      style={{
-                        marginLeft: "6px",
+                    <Checkbox
+                      defaultChecked={this.state.rememberPassword}
+                      onChange={(e) => {
+                        this.setState({ rememberPassword: e.target.checked });
                       }}
                     >
-                      Remember password
-                    </label>
+                      Remember me
+                    </Checkbox>
                   </span>
                   <span>
                     <a href="#" style={{ color: "#0073b1" }}>
@@ -157,7 +194,6 @@ class LoginPage extends React.Component<Prop> {
                 <span className={"button-accept-props"}>
                   <Button
                     type="primary"
-                    loading={this.state.loading.login}
                     htmlType="submit"
                     style={{
                       backgroundColor: "#14b1e7",
@@ -211,8 +247,12 @@ class LoginPage extends React.Component<Prop> {
   }
 }
 
+const mapStateToProps = (state) => ({
+  username: state.userName,
+})
+
 const mapDispatchToProps = (dispatch) => ({
   reduxSaveAuthUser: (payload: any) => dispatch(saveAuthUser(payload)),
 });
 
-export default connect(null, mapDispatchToProps)(LoginPage);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

@@ -1,6 +1,6 @@
 let initialState = {
   userName: "",
-  email: "",
+  email: ""
 };
 
 export const AuthUserInfoReducer = (state = initialState, action) => {
