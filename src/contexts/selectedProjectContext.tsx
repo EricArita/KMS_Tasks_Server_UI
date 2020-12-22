@@ -14,7 +14,7 @@ export const SelectedProjectContextProvider = ({ children }) => {
   );
 };
 
-export const selectedProjectContextValue = () => useContext(SelectedProjectContext);
+export const selectedProjectContextValue = () => useContext<any>(SelectedProjectContext);
 
 SelectedProjectContextProvider.propTypes = {
   children: PropTypes.node.isRequired,

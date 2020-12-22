@@ -12,7 +12,7 @@ export const ProjectsContextProvider = ({ children }) => {
   );
 };
 
-export const projectsContextValue = () => useContext(ProjectsContext);
+export const projectsContextValue = () => useContext<any>(ProjectsContext);
 
 ProjectsContextProvider.propTypes = {
   children: PropTypes.node.isRequired,

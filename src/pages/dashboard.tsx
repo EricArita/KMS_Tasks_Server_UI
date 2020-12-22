@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Header, Content } from "../components/layout";
-// import "../styles/header.scss";
 import { ProjectsContextProvider, SelectedProjectContextProvider } from '../contexts';
 
 const DashboardPage = ({ darkModeDefault = false }) => {
