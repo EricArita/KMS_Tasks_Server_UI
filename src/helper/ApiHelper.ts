@@ -1,7 +1,7 @@
-import { config } from "../config/config";
+import { config } from "../config/appconfig";
 
 export const callApiServer = async (httpMethod: string, api: string, requestBody?: object) => {
-  let url = config.url.apiServer + api;
+  let url = config.url.httpApiServer + api;
   const accessToken = localStorage.getItem("token");
   
   try {
@@ -20,6 +20,10 @@ export const callApiServer = async (httpMethod: string, api: string, requestBody
         },
       });
 
+      if (response.status === 401) {
+        window.location.href = "/login";
+      }
+
       if (response.ok) {
         const jsonRespon = await response.json();
         return jsonRespon;
@@ -37,6 +41,11 @@ export const callApiServer = async (httpMethod: string, api: string, requestBody
                 ? JSON.stringify(requestBody)
                 : JSON.stringify({})  
       });
+
+      if (response.status === 401) {
+        window.location.href = "/login";
+      }
+      
       if (response.ok) {
         const jsonRespon = await response.json();
         return jsonRespon;

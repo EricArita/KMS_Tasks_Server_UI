@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Header, Content } from "../components/layout";
 import { ProjectsContextProvider, SelectedProjectContextProvider } from '../contexts';
 
 const DashboardPage = ({ darkModeDefault = false }) => {
   const [darkMode, setDarkMode] = useState(darkModeDefault);
-
+  
   return (
     <SelectedProjectContextProvider>
       <ProjectsContextProvider>

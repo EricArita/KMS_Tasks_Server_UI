@@ -8,35 +8,40 @@ export const Projects = ({ activeValue = null }) => {
   const { projects, setSelectedProject } = projectsContextValue();
 
   return (
-    projects &&
-    projects.map((project) => (
-      <li
-        key={project.projectId}
-        data-testid="project-action-parent"
-        data-doc-id={project.docId}
-        className={
-          active === project.projectId
-            ? 'active sidebar__project'
-            : 'sidebar__project'
-        }
-      >
-        <div
-          role="button"
-          data-testid="project-action"
-          tabIndex={0}
-          aria-label={`Select ${project.name} as the task project`}
-          onClick={() => {
-            setActive(project.projectId);
-            setSelectedProject(project.projectId);
-          }}
-        >
-          <IndividualProject project={project} />
-        </div>
-      </li>
-    ))
+    <ul className="sidebar__projects">
+      {projects &&
+        projects.map(
+          (project) =>
+            project.parent === null && (
+              <li
+                key={project.id}
+                data-testid="project-action-parent"
+                data-doc-id={project.docId}
+                className={
+                  active === project.id
+                    ? "active sidebar__project"
+                    : "sidebar__project"
+                }
+              >
+                <div
+                  role="button"
+                  data-testid="project-action"
+                  tabIndex={0}
+                  aria-label={`Select ${project.name} as the task project`}
+                  onClick={() => {
+                    setActive(project.id);
+                    setSelectedProject(project.id);
+                  }}
+                >
+                  <IndividualProject project={project} />
+                </div>
+              </li>
+            )
+        )}
+    </ul>
   );
 };
 
 Projects.propTypes = {
-  activeValue: PropTypes.bool,
+  activeValue: PropTypes.number,
 };

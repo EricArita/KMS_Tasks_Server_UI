@@ -8,8 +8,9 @@ import "../styles/login.scss";
 import { FormInstance } from "antd/lib/form";
 import { connect } from "react-redux";
 import { saveAuthUser } from "../redux/actions/userActionCreator";
-import { config } from "../config/config";
+import { config } from "../config/appconfig";
 import Checkbox from "antd/lib/checkbox/Checkbox";
+import { NextRouter, withRouter } from 'next/router'
 
 interface LoginInfo {
   username: string;
@@ -20,7 +21,8 @@ interface LoginInfo {
 interface Prop {
   username: string,
   password: string,
-  reduxSaveAuthUser: any
+  reduxSaveAuthUser: any,
+  router: NextRouter
 }
 
 interface State {
@@ -43,7 +45,6 @@ class LoginPage extends React.Component<Prop, State> {
     super(props);
   
     const rememberPassword = localStorage.getItem("remember_me") === "true";
-    console.log(rememberPassword);
     this.state = {
       rememberPassword: rememberPassword,
       username: rememberPassword ? localStorage.getItem("usernameUnauthorized") : "",
@@ -99,6 +100,7 @@ class LoginPage extends React.Component<Prop, State> {
       FB.login(this.getApiAccessToken);
     } else {
       message.success("Login successfully");
+      this.props.router.push("/dashboard");
     }
   }
 
@@ -130,6 +132,7 @@ class LoginPage extends React.Component<Prop, State> {
       });
 
       message.success("Login successfully");
+      this.props.router.push("/dashboard");
     }
   }
 
@@ -255,4 +258,4 @@ const mapDispatchToProps = (dispatch) => ({
   reduxSaveAuthUser: (payload: any) => dispatch(saveAuthUser(payload)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LoginPage));

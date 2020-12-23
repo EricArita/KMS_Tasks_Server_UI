@@ -55,31 +55,51 @@
 
         &:nth-child(1) {
             .sidebar__dot {
-                color: #6accbc;
+                content: "";
+                width: 10px;
+                height: 10px;
+                background-color: #6accbc;
+                border-radius: 50%;
             }
         }
 
         &:nth-child(2) {
             .sidebar__dot {
-                color: #fad003;
+                content: "";
+                width: 10px;
+                height: 10px;
+                background-color: #fad003;
+                border-radius: 50%;
             }
         }
 
         &:nth-child(3) {
             .sidebar__dot {
-                color: #ff8d85;
+                content: "";
+                width: 10px;
+                height: 10px;
+                background-color: #ff8d85;
+                border-radius: 50%;
             }
         }
 
         &:nth-child(4) {
             .sidebar__dot {
-                color: #ff9932;
+                content: "";
+                width: 10px;
+                height: 10px;
+                background-color: #ff9932;
+                border-radius: 50%;
             }
         }
 
         &:nth-child(5) {
             .sidebar__dot {
-                color: #af38eb;
+                content: "";
+                width: 10px;
+                height: 10px;
+                background-color: #af38eb;
+                border-radius: 50%;
             }
         }
     }
