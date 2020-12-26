@@ -22,7 +22,8 @@
         }
     }
 
-    &__project {
+    &__project, 
+    &__addProject {
         cursor: pointer;
 
         div:nth-child(1) {
@@ -51,57 +52,33 @@
         &:hover {
             font-weight: bold;
             background-color: white;
-        }
 
-        &:nth-child(1) {
             .sidebar__dot {
-                content: "";
-                width: 10px;
-                height: 10px;
-                background-color: #6accbc;
-                border-radius: 50%;
+                background-color: #14b1e7;
             }
         }
 
-        &:nth-child(2) {
-            .sidebar__dot {
-                content: "";
-                width: 10px;
-                height: 10px;
-                background-color: #fad003;
-                border-radius: 50%;
-            }
+        .sidebar__dot {
+            content: "";
+            width: 10px;
+            height: 10px;
+            background-color: gray;
+            border-radius: 50%;
         }
+    }
 
-        &:nth-child(3) {
-            .sidebar__dot {
-                content: "";
-                width: 10px;
-                height: 10px;
-                background-color: #ff8d85;
-                border-radius: 50%;
-            }
+    &__addProject {
+        margin-top: 10px;
+        color: gray;
+        
+        .icon_plus {
+            color: red;
         }
+    }
 
-        &:nth-child(4) {
-            .sidebar__dot {
-                content: "";
-                width: 10px;
-                height: 10px;
-                background-color: #ff9932;
-                border-radius: 50%;
-            }
-        }
-
-        &:nth-child(5) {
-            .sidebar__dot {
-                content: "";
-                width: 10px;
-                height: 10px;
-                background-color: #af38eb;
-                border-radius: 50%;
-            }
-        }
+    &__addProject:hover {
+        color: #14b1e7;
+        font-weight: normal;
     }
 
     &__projects {

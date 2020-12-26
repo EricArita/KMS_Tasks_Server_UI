@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { projectsContextValue } from "../contexts";
 import { IndividualProject } from "./IndividualProject";
+import { AddProject } from "./layout/AddProject";
 
 export const Projects = ({ activeValue = null }) => {
   const [active, setActive] = useState(activeValue);
-  const { projects, setSelectedProject } = projectsContextValue();
+  const { projects, setProjects } = projectsContextValue();
 
   return (
     <ul className="sidebar__projects">
@@ -30,7 +31,7 @@ export const Projects = ({ activeValue = null }) => {
                   aria-label={`Select ${project.name} as the task project`}
                   onClick={() => {
                     setActive(project.id);
-                    setSelectedProject(project.id);
+                    // setSelectedProject(project.id);
                   }}
                 >
                   <IndividualProject project={project} />
@@ -38,6 +39,9 @@ export const Projects = ({ activeValue = null }) => {
               </li>
             )
         )}
+      <li className="sidebar__addProject">
+        <AddProject />
+      </li>
     </ul>
   );
 };

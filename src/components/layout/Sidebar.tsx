@@ -93,8 +93,6 @@ export const Sidebar = () => {
       </div>
 
       {showProjects && <Projects activeValue={1} />}
-
-      {showProjects && <AddProject />}
     </div>
   );
 };

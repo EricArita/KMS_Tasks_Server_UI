@@ -5,8 +5,8 @@ export const callApiServer = async (httpMethod: string, api: string, requestBody
   const accessToken = localStorage.getItem("token");
   
   try {
-    if (httpMethod === "GET") {
-      if (httpMethod === "GET" && requestBody !== undefined && requestBody !== null) {
+    if (httpMethod === "GET" || httpMethod === "DELETE") {
+      if (requestBody !== undefined && requestBody !== null) {
         const encodedQueryParams = encodeURI(JSON.stringify(requestBody));
         url += `?${encodedQueryParams}`;
       }

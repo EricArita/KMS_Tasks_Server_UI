@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
-import { FaTrashAlt } from 'react-icons/fa';
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
+import { Button, message, Modal } from "antd";
+import { FaTrashAlt } from "react-icons/fa";
+import PropTypes from "prop-types";
 import { projectsContextValue, selectedProjectContextValue } from "../contexts";
+import { callApiServer } from "../helper/ApiHelper";
 
 export const IndividualProject = ({ project }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const { projects, setProjects } = projectsContextValue();
-  const { selectedProject, setSelectedProject } = selectedProjectContextValue();
+  // const { selectedProject, setSelectedProject } = selectedProjectContextValue();
 
-  const deleteProject = (docId) => {
+  const deleteProject = async (projectId) => {
+    const res = await callApiServer("DELETE", `project-management/project/${projectId}`);
+    if (res.ok) {
+      message.success("Delete project successfully");
+      let newArray = projects.filter(proj => proj.id !== projectId);
+      setProjects([...newArray]);
+    }
+    else {
+      message.error(res.message);
+    }
   };
 
   return (
@@ -24,30 +35,23 @@ export const IndividualProject = ({ project }) => {
         aria-label="Confirm deletion of project"
       >
         <FaTrashAlt />
-        {showConfirm && (
-          <div className="project-delete-modal">
-            <div className="project-delete-modal__inner">
-              <p>Are you sure you want to delete this project?</p>
-              <button
-                type="button"
-                onClick={() => deleteProject(project.docId)}
-              >
-                Delete
-              </button>
-              <span
-                onClick={() => setShowConfirm(!showConfirm)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') setShowConfirm(!showConfirm);
-                }}
-                tabIndex={0}
-                role="button"
-                aria-label="Cancel adding project, do not delete"
-              >
-                Cancel
-              </span>
-            </div>
-          </div>
-        )}
+        <Modal
+          key={"modal-delete-project"}
+          visible={showConfirm}
+          title="Delete project"
+          footer={[
+            <Button key="back" onClick={() => setShowConfirm(false)}>
+              Cancel
+            </Button>,
+            <Button type="primary" onClick={() => deleteProject(project.id)}>
+              Delete
+            </Button>,
+          ]}
+        >
+          <span>
+            Are you use to remove this project?
+          </span>
+        </Modal>
       </span>
     </>
   );
