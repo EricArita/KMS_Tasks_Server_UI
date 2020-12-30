@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Input, message } from "antd";
 import PropTypes from "prop-types";
-import { projectsContextValue } from "../../contexts/projectContext";
-import { callApiServer } from "../../helper/ApiHelper";
+import { projectsContextValue } from "../contexts/projectContext";
+import { callApiServer } from "../helper/ApiHelper";
 
 export const AddProject = ({ shouldShow = false }) => {
   const [visibleModal, setVisibleModal] = useState(false);

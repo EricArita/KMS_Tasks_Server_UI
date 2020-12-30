@@ -5,6 +5,7 @@ import { FiSettings, FiLogOut } from 'react-icons/fi';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import PropTypes from 'prop-types';
+import { AddTask } from '../AddTask';
 // import { AddTask } from '../AddTask';
 
 export const Header = ({ darkMode, setDarkMode }) => {
@@ -81,12 +82,12 @@ export const Header = ({ darkMode, setDarkMode }) => {
         </div>
       </nav>
 
-      {/* <AddTask
+      <AddTask
         showAddTaskMain={false}
         shouldShowMain={shouldShowMain}
         showQuickAddTask={showQuickAddTask}
         setShowQuickAddTask={setShowQuickAddTask}
-      /> */}
+      />
     </header >
   );
 };

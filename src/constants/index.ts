@@ -1,0 +1,5 @@
+export const TODAY = "Today"
+export const TOMORROW = "Tomorrow"
+export const WEEKEND = "Weekend"
+export const THIS_WEEK = "This week"
+export const NEXT_WEEK = "Next week"

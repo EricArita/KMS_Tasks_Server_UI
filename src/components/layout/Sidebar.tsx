@@ -7,7 +7,7 @@ import {
 } from 'react-icons/fa';
 import { Projects } from '../Projects';
 import { selectedProjectContextValue } from '../../contexts';
-import { AddProject } from './AddProject';
+import { AddProject } from '../AddProject';
 // import { AddProject } from '../AddProject';
 
 export const Sidebar = () => {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { projectsContextValue } from "../contexts";
 import { IndividualProject } from "./IndividualProject";
-import { AddProject } from "./layout/AddProject";
+import { AddProject } from "./AddProject";
 
 export const Projects = ({ activeValue = null }) => {
   const [active, setActive] = useState(activeValue);
